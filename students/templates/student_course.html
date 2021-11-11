@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add school</title>
+    <title>Add student to course</title>
 </head>
 <body>
-<h1>Add course</h1>
+<h1>Add student to course</h1>
 <form action="" method="POST">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Create course</button>
+    <button type="submit">Add student</button>
 </form>
 </body>
 </html>

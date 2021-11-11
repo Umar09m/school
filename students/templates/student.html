@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add student</title>
+</head>
+<body>
+
+<h1>List of students:</h1>
+{% for student in students %}
+<div class="container" style="border: 2px dashed black; margin-top: 1rem; width: 500px;">
+    <p>Name: {{ student.name }}</p>
+    <p>School: {{ student.school }}</p>
+<!--    {% for course in student_courses %}}-->
+<!--&lt;!&ndash;        {% if course.student.name == student.name %}&ndash;&gt;-->
+<!--        <p>Courses: {{ course }}</p>-->
+<!--&lt;!&ndash;        {% endif %}}&ndash;&gt;-->
+<!--    {% endfor %}-->
+</div>
+{% endfor %}
+
+<h2>Add student</h2>
+<form action="" method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Create student</button>
+</form>
+
+
+</body>
+</html>

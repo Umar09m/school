@@ -8,7 +8,7 @@ class CourseView(generic.CreateView):
     model = Course
     form_class = CourseForm
     template_name = 'course.html'
-    success_url = 'home'
+    success_url = '/courses/'
 
     # def post(self, request, *args, **kwargs):
     #     form = self.get_form_class(request.data)
