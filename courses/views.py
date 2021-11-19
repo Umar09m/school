@@ -30,7 +30,7 @@ def courses_list(request):
 def course_detail(request, pk):
     try:
         course = Course.objects.get(pk=pk)
-    except Course.DoezNotExist:
+    except Course.DoesNotExist:
         return HttpResponse(status=404)
 
     if request.method == "GET":
