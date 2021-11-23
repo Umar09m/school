@@ -1,11 +1,39 @@
 from django.http import JsonResponse, HttpResponse
+from django.shortcuts import get_object_or_404
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import status, parsers, views, response
+from rest_framework import status, parsers, views, response, mixins, generics, viewsets
 
 from .forms import StudentForm
 from .models import Student
 from .serializers import StudentSerializers
+
+
+class StudentListMixinView(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializers
+
+    def get(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+
+class StudentDetailMixinView(
+    mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView
+):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializers
+
+    def get(self, request, pk, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
 
 
 @csrf_exempt
@@ -89,3 +117,54 @@ class StudentDetailAPIView(views.APIView):
             serializer.save()
             return response.Response(data=serializer.data, status=status.HTTP_200_OK)
         return response.Response(data=serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StudentListCreateView(generics.ListCreateAPIView):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializers
+
+
+class StudentDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializers
+
+
+class StudentViewSet(viewsets.ViewSet):
+    """
+    A viewset for listing or retrieving students
+
+    """
+    def list(self, request):
+        queryset = Student.objects.all()
+        serializer = StudentSerializers(instance=queryset, many=True)
+        return response.Response(data=serializer.data)
+
+    def create(self, request):
+        serializer = StudentSerializers(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return response.Response(data=serializer.data)
+
+    def partial_update(self,request, pk=None):
+        queryset = Student.objects.all()
+        student = get_object_or_404(queryset, pk=pk)
+        serializer = StudentSerializers(instance=student, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return response.Response(data=serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = Student.objects.all()
+        student = get_object_or_404(queryset, pk=pk)
+        serializer = StudentSerializers(instance=student)
+        return response.Response(data=serializer.data)
+
+    def destroy(self, request, pk=None):
+        queryset = Student.objects.all()
+        student = get_object_or_404(queryset, pk=pk)
+        student.delete()
+        return response.Response(status=status.HTTP_204_NO_CONTENT)
+
+class StudentViewSet2(viewsets.ModelViewSet):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializers

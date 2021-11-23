@@ -1,10 +1,10 @@
-from django.shortcuts import render
-from rest_framework import views, status, parsers
-from django.views.decorators.csrf import csrf_exempt
-from django.views import generic
-from .models import Course
-from .forms import CourseForm
 from django.http import JsonResponse, HttpResponse
+from django.views import generic
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework import views, status, parsers, generics
+
+from .forms import CourseForm
+from .models import Course
 from .serializers import CourseSerializers
 
 
@@ -60,3 +60,12 @@ class CourseView(generic.CreateView):
     template_name = 'course.html'
     success_url = '/courses/'
 
+
+class CourseListView(generics.ListCreateAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializers
+
+
+class CourseDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializers
