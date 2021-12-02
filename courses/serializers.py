@@ -12,6 +12,16 @@ class CourseSerializers(serializers.Serializer):
     duration = serializers.IntegerField()
     max_students = serializers.IntegerField(min_value=1, max_value=20)
 
+    def validate(self, attrs):
+        name = attrs["name"]
+        school = attrs["school"]
+        course = Course.objects.filter(name=name, school=school).first()
+        if course:
+            raise serializers.ValidationError(detail="We have already had course like this!!!",
+                                              code="course_name_unique"
+                                              )
+        return super().validate(attrs)
+
     def create(self, validated_data):
         """
         Create() method creates and returns a new Course instance
